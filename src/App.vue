@@ -1,6 +1,11 @@
 <script setup>
   import { reactive } from 'vue';
 
+  import Cabecalho from './components/Cabecalho.vue';
+  import Formulario from './components/Formulario.vue';
+  import ListaDeTarefas from './components/ListaDeTarefas.vue';
+  
+
   const estado = reactive({
     filtro: 'todas',
     tarefaTemp: '',
@@ -48,47 +53,19 @@
     }
     estado.tarefas.push(tarefaNova);
     estado.tarefaTemp = '';
-  } 
+  }
 </script>
 
 <template>
   <div class="container">
-    <header class="p-5 mb-4 mt-4 bg-light rounded-3">
-      <h1>Minhas tarefas</h1>
-      <p>
-        Você possui {{ estado.tarefas.filter(t => !t.finalizada).length }} tarefas pendentes
-      </p>
-    </header>
-    <form @submit.prevent="cadastraTarefa">
-      <div class="row">
-        <div class="col">
-          <input :value="estado.tarefaTemp" @change="evento => estado.tarefaTemp = evento.target.value" required type="text" placeholder="Digite aqui a descrição da tarefa" class="form-control">
-        </div>
-        <div class="col-md-2">
-          <button type="submit" class="btn btn-primary">Cadastrar</button>
-        </div>
-        <div class="col-md-2">
-          <select @change="evento => estado.filtro = evento.target.value" class="form-control">
-            <option value="todas">Todas as tarefas</option>
-            <option value="pendentes">Pendentes</option>
-            <option value="finalizadas">Finalizadas</option>
-          </select>
-        </div>
-      </div>
-    </form>
-    <ul class="list-group mt-4">
-      <li class="list-group-item" v-for="tarefa in getTarefasFiltradas()" :key="tarefa.titulo">
-        <input v-model="tarefa.finalizada" :id="tarefa.titulo" type="checkbox">
-        <label :class="{ done: tarefa.finalizada === true}" class="ms-3" :for="tarefa.titulo">
-          {{tarefa.titulo}}
-        </label>
-      </li>
-    </ul>
+    <Cabecalho :estado="estado"/>
+    <Formulario :trocarFiltro="evento => estado.filtro = evento.target.value" :tarefaTemp="estado.tarefaTemp" :editaTarefaTemp="evento => estado.tarefaTemp = evento.target.value" :cadastraTarefa="cadastraTarefa"/>
+    <ListaDeTarefas :tarefas="getTarefasFiltradas()"/>
   </div>
 </template>
 
 <style scoped>
-  .done {
+  :deep(li.done label) {
     text-decoration: line-through;
   }
 </style>
